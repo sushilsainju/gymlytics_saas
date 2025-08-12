@@ -1,17 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Plus, Mail, Phone, Calendar, TrendingUp, User, LayoutGrid, List } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Search, Filter, Plus, Mail, Phone, Calendar, TrendingUp, LayoutGrid, List, Eye } from "lucide-react"
 import { Sidebar } from "@/components/sidebar"
 import Link from "next/link"
 
-// Mock data for members
+// Mock data for members (same as card view)
 const members = [
   {
     id: 1,
@@ -69,7 +69,7 @@ const members = [
     subscriptionExpiry: "2024-12-16",
     trainer: "David Chen",
     joinDate: "2024-03-20",
-    lastVisit: "2024-11-25",
+    lastVisit: "2024-12-08",
     workoutsSessions: 28,
     progressScore: 73,
   },
@@ -105,7 +105,7 @@ const members = [
   },
 ]
 
-export default function MembersPage() {
+export default function MembersListPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
@@ -161,14 +161,14 @@ export default function MembersPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="flex items-center bg-slate-100 rounded-lg p-1">
-                <Button variant="ghost" size="sm" className="h-8 px-3 bg-white shadow-sm">
-                  <LayoutGrid className="h-4 w-4" />
-                </Button>
-                <Link href="/members/list">
+                <Link href="/members">
                   <Button variant="ghost" size="sm" className="h-8 px-3">
-                    <List className="h-4 w-4" />
+                    <LayoutGrid className="h-4 w-4" />
                   </Button>
                 </Link>
+                <Button variant="ghost" size="sm" className="h-8 px-3 bg-white shadow-sm">
+                  <List className="h-4 w-4" />
+                </Button>
               </div>
               <Button className="bg-emerald-600 hover:bg-emerald-700">
                 <Plus className="h-4 w-4 mr-2" />
@@ -218,7 +218,7 @@ export default function MembersPage() {
           </div>
         </div>
 
-        {/* Members Grid */}
+        {/* Members Table */}
         <main className="flex-1 p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-sm text-slate-600">
@@ -226,88 +226,104 @@ export default function MembersPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredMembers.map((member) => (
-              <Card key={member.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={member.avatar || "/placeholder.svg"} />
-                      <AvatarFallback>
-                        {member.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg font-semibold text-slate-900">{member.name}</CardTitle>
-                      <div className="flex gap-2 mt-1">
-                        <Badge variant="secondary" className={getStatusColor(member.subscriptionStatus)}>
-                          {member.subscriptionStatus}
-                        </Badge>
-                        <Badge variant="secondary" className={getTypeColor(member.subscriptionType)}>
-                          {member.subscriptionType}
-                        </Badge>
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-50">
+                  <TableHead className="font-semibold text-slate-900">Member</TableHead>
+                  <TableHead className="font-semibold text-slate-900">Contact</TableHead>
+                  <TableHead className="font-semibold text-slate-900">Subscription</TableHead>
+                  <TableHead className="font-semibold text-slate-900">Trainer</TableHead>
+                  <TableHead className="font-semibold text-slate-900">Progress</TableHead>
+                  <TableHead className="font-semibold text-slate-900">Last Visit</TableHead>
+                  <TableHead className="font-semibold text-slate-900">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredMembers.map((member) => (
+                  <TableRow key={member.id} className="hover:bg-slate-50">
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={member.avatar || "/placeholder.svg"} />
+                          <AvatarFallback>
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium text-slate-900">{member.name}</div>
+                          <div className="text-sm text-slate-500">
+                            Joined {new Date(member.joinDate).toLocaleDateString()}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Contact Info */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Mail className="h-3 w-3" />
-                      <span className="truncate">{member.email}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Phone className="h-3 w-3" />
-                      <span>{member.phone}</span>
-                    </div>
-                  </div>
-
-                  {/* Subscription Info */}
-                  <div className="bg-slate-50 rounded-lg p-3 space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Expires:</span>
-                      <span className="font-medium text-slate-900">
-                        {new Date(member.subscriptionExpiry).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Trainer:</span>
-                      <span className="font-medium text-slate-900">{member.trainer}</span>
-                    </div>
-                  </div>
-
-                  {/* Progress Stats */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-slate-900">{member.workoutsSessions}</div>
-                      <div className="text-xs text-slate-500">Sessions</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <span className="text-lg font-bold text-slate-900">{member.progressScore}%</span>
-                        <TrendingUp className="h-3 w-3 text-emerald-600" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                          <Mail className="h-3 w-3" />
+                          <span className="truncate max-w-[200px]">{member.email}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                          <Phone className="h-3 w-3" />
+                          <span>{member.phone}</span>
+                        </div>
                       </div>
-                      <div className="text-xs text-slate-500">Progress</div>
-                    </div>
-                  </div>
-
-                  {/* Last Visit */}
-                  <div className="flex items-center gap-2 text-xs text-slate-500 pt-2 border-t border-slate-100">
-                    <Calendar className="h-3 w-3" />
-                    <span>Last visit: {new Date(member.lastVisit).toLocaleDateString()}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <Badge variant="secondary" className={getStatusColor(member.subscriptionStatus)}>
+                            {member.subscriptionStatus}
+                          </Badge>
+                          <Badge variant="secondary" className={getTypeColor(member.subscriptionType)}>
+                            {member.subscriptionType}
+                          </Badge>
+                        </div>
+                        <div className="text-sm text-slate-600">
+                          Expires: {new Date(member.subscriptionExpiry).toLocaleDateString()}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-medium text-slate-900">{member.trainer}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-slate-900">{member.progressScore}%</span>
+                          <TrendingUp className="h-3 w-3 text-emerald-600" />
+                        </div>
+                        <div className="text-sm text-slate-500">{member.workoutsSessions} sessions</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <Calendar className="h-3 w-3" />
+                        <span>{new Date(member.lastVisit).toLocaleDateString()}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Link href={`/members/${member.id}`}>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
 
           {filteredMembers.length === 0 && (
-            <div className="text-center py-12">
-              <User className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
+              <div className="text-slate-400 mb-4">
+                <List className="h-12 w-12 mx-auto" />
+              </div>
               <h3 className="text-lg font-medium text-slate-900 mb-2">No members found</h3>
               <p className="text-slate-600">Try adjusting your search or filter criteria.</p>
             </div>

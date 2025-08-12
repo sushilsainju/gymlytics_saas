@@ -1,16 +1,52 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Search, Filter, Plus, CreditCard, AlertTriangle, RefreshCw } from "lucide-react"
-import { Sidebar } from "@/components/sidebar"
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Search,
+  Filter,
+  Plus,
+  CreditCard,
+  AlertTriangle,
+  RefreshCw,
+} from "lucide-react";
+import { Sidebar } from "@/components/sidebar";
+
+interface Subscription {
+  id: number;
+  memberName: string;
+  memberAvatar: string;
+  memberEmail: string;
+  planType: string;
+  status: string;
+  startDate: string;
+  endDate: string;
+  monthlyFee: number;
+  paymentStatus: string;
+  lastPayment: string | null;
+  nextPayment: string | null;
+  paymentMethod: string;
+  totalPaid: number;
+  daysUntilExpiry: number;
+}
 
 // Mock data for subscriptions
 const subscriptions = [
@@ -116,88 +152,106 @@ const subscriptions = [
     totalPaid: 629.93,
     daysUntilExpiry: 120,
   },
-]
+];
 
 const planTypes = [
   { name: "Basic", price: 39.99, features: ["Gym Access", "Basic Equipment"] },
-  { name: "Standard", price: 59.99, features: ["Gym Access", "All Equipment", "Group Classes"] },
+  {
+    name: "Standard",
+    price: 59.99,
+    features: ["Gym Access", "All Equipment", "Group Classes"],
+  },
   {
     name: "Premium",
     price: 89.99,
-    features: ["Gym Access", "All Equipment", "Group Classes", "Personal Training", "Nutrition Coaching"],
+    features: [
+      "Gym Access",
+      "All Equipment",
+      "Group Classes",
+      "Personal Training",
+      "Nutrition Coaching",
+    ],
   },
-]
+];
 
 export default function SubscriptionsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [planFilter, setPlanFilter] = useState("all")
-  const [paymentFilter, setPaymentFilter] = useState("all")
-  const [isRenewDialogOpen, setIsRenewDialogOpen] = useState(false)
-  const [selectedSubscription, setSelectedSubscription] = useState<any>(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [planFilter, setPlanFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
+  const [isRenewDialogOpen, setIsRenewDialogOpen] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] =
+    useState<Subscription | null>(null);
 
   const filteredSubscriptions = subscriptions.filter((subscription) => {
     const matchesSearch =
-      subscription.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      subscription.memberEmail.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || subscription.status.toLowerCase() === statusFilter.toLowerCase()
-    const matchesPlan = planFilter === "all" || subscription.planType.toLowerCase() === planFilter.toLowerCase()
+      subscription.memberName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      subscription.memberEmail.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" ||
+      subscription.status.toLowerCase() === statusFilter.toLowerCase();
+    const matchesPlan =
+      planFilter === "all" ||
+      subscription.planType.toLowerCase() === planFilter.toLowerCase();
     const matchesPayment =
-      paymentFilter === "all" || subscription.paymentStatus.toLowerCase() === paymentFilter.toLowerCase()
+      paymentFilter === "all" ||
+      subscription.paymentStatus.toLowerCase() === paymentFilter.toLowerCase();
 
-    return matchesSearch && matchesStatus && matchesPlan && matchesPayment
-  })
+    return matchesSearch && matchesStatus && matchesPlan && matchesPayment;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
-        return "bg-emerald-100 text-emerald-700"
+        return "bg-emerald-100 text-emerald-700";
       case "expiring":
-        return "bg-amber-100 text-amber-700"
+        return "bg-amber-100 text-amber-700";
       case "cancelled":
-        return "bg-red-100 text-red-700"
+        return "bg-red-100 text-red-700";
       default:
-        return "bg-slate-100 text-slate-700"
+        return "bg-slate-100 text-slate-700";
     }
-  }
+  };
 
   const getPaymentStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "paid":
-        return "bg-emerald-100 text-emerald-700"
+        return "bg-emerald-100 text-emerald-700";
       case "overdue":
-        return "bg-red-100 text-red-700"
+        return "bg-red-100 text-red-700";
       case "refunded":
-        return "bg-blue-100 text-blue-700"
+        return "bg-blue-100 text-blue-700";
       default:
-        return "bg-slate-100 text-slate-700"
+        return "bg-slate-100 text-slate-700";
     }
-  }
+  };
 
   const getPlanColor = (plan: string) => {
     switch (plan.toLowerCase()) {
       case "premium":
-        return "bg-purple-100 text-purple-700"
+        return "bg-purple-100 text-purple-700";
       case "standard":
-        return "bg-blue-100 text-blue-700"
+        return "bg-blue-100 text-blue-700";
       case "basic":
-        return "bg-slate-100 text-slate-700"
+        return "bg-slate-100 text-slate-700";
       default:
-        return "bg-slate-100 text-slate-700"
+        return "bg-slate-100 text-slate-700";
     }
-  }
+  };
 
-  const handleRenewSubscription = (subscription: any) => {
-    setSelectedSubscription(subscription)
-    setIsRenewDialogOpen(true)
-  }
+  const handleRenewSubscription = (subscription: Subscription) => {
+    setSelectedSubscription(subscription);
+    setIsRenewDialogOpen(true);
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -208,8 +262,12 @@ export default function SubscriptionsPage() {
         <header className="bg-white border-b border-slate-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Subscriptions</h1>
-              <p className="text-slate-600">Manage member subscriptions and payment tracking</p>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Subscriptions
+              </h1>
+              <p className="text-slate-600">
+                Manage member subscriptions and payment tracking
+              </p>
             </div>
             <Button className="bg-emerald-600 hover:bg-emerald-700">
               <Plus className="h-4 w-4 mr-2" />
@@ -235,13 +293,18 @@ export default function SubscriptionsPage() {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">
-                {subscriptions.filter((s) => s.paymentStatus === "Overdue").length}
+                {
+                  subscriptions.filter((s) => s.paymentStatus === "Overdue")
+                    .length
+                }
               </div>
               <div className="text-sm text-slate-600">Overdue Payments</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-slate-900">
-                {formatCurrency(subscriptions.reduce((sum, s) => sum + s.totalPaid, 0))}
+                {formatCurrency(
+                  subscriptions.reduce((sum, s) => sum + s.totalPaid, 0)
+                )}
               </div>
               <div className="text-sm text-slate-600">Total Revenue</div>
             </div>
@@ -303,18 +366,24 @@ export default function SubscriptionsPage() {
         <main className="flex-1 p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-sm text-slate-600">
-              Showing {filteredSubscriptions.length} of {subscriptions.length} subscriptions
+              Showing {filteredSubscriptions.length} of {subscriptions.length}{" "}
+              subscriptions
             </p>
           </div>
 
           <div className="space-y-4">
             {filteredSubscriptions.map((subscription) => (
-              <Card key={subscription.id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={subscription.id}
+                className="hover:shadow-md transition-shadow"
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={subscription.memberAvatar || "/placeholder.svg"} />
+                        <AvatarImage
+                          src={subscription.memberAvatar || "/placeholder.svg"}
+                        />
                         <AvatarFallback>
                           {subscription.memberName
                             .split(" ")
@@ -323,16 +392,31 @@ export default function SubscriptionsPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-semibold text-slate-900">{subscription.memberName}</h3>
-                        <p className="text-sm text-slate-600">{subscription.memberEmail}</p>
+                        <h3 className="font-semibold text-slate-900">
+                          {subscription.memberName}
+                        </h3>
+                        <p className="text-sm text-slate-600">
+                          {subscription.memberEmail}
+                        </p>
                         <div className="flex gap-2 mt-1">
-                          <Badge variant="secondary" className={getStatusColor(subscription.status)}>
+                          <Badge
+                            variant="secondary"
+                            className={getStatusColor(subscription.status)}
+                          >
                             {subscription.status}
                           </Badge>
-                          <Badge variant="secondary" className={getPlanColor(subscription.planType)}>
+                          <Badge
+                            variant="secondary"
+                            className={getPlanColor(subscription.planType)}
+                          >
                             {subscription.planType}
                           </Badge>
-                          <Badge variant="secondary" className={getPaymentStatusColor(subscription.paymentStatus)}>
+                          <Badge
+                            variant="secondary"
+                            className={getPaymentStatusColor(
+                              subscription.paymentStatus
+                            )}
+                          >
                             {subscription.paymentStatus}
                           </Badge>
                         </div>
@@ -343,39 +427,58 @@ export default function SubscriptionsPage() {
                       <div className="text-lg font-bold text-slate-900">
                         {formatCurrency(subscription.monthlyFee)}/month
                       </div>
-                      <div className="text-sm text-slate-600">Total: {formatCurrency(subscription.totalPaid)}</div>
+                      <div className="text-sm text-slate-600">
+                        Total: {formatCurrency(subscription.totalPaid)}
+                      </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-slate-100">
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wide">Start Date</p>
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">
+                        Start Date
+                      </p>
                       <p className="text-sm font-medium text-slate-900">
                         {new Date(subscription.startDate).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wide">End Date</p>
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">
+                        End Date
+                      </p>
                       <p className="text-sm font-medium text-slate-900">
                         {new Date(subscription.endDate).toLocaleDateString()}
                       </p>
-                      {subscription.daysUntilExpiry > 0 && subscription.daysUntilExpiry <= 30 && (
-                        <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
-                          <AlertTriangle className="h-3 w-3" />
-                          {subscription.daysUntilExpiry} days left
-                        </p>
-                      )}
+                      {subscription.daysUntilExpiry > 0 &&
+                        subscription.daysUntilExpiry <= 30 && (
+                          <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            {subscription.daysUntilExpiry} days left
+                          </p>
+                        )}
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wide">Last Payment</p>
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">
+                        Last Payment
+                      </p>
                       <p className="text-sm font-medium text-slate-900">
-                        {subscription.lastPayment ? new Date(subscription.lastPayment).toLocaleDateString() : "N/A"}
+                        {subscription.lastPayment
+                          ? new Date(
+                              subscription.lastPayment
+                            ).toLocaleDateString()
+                          : "N/A"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wide">Next Payment</p>
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">
+                        Next Payment
+                      </p>
                       <p className="text-sm font-medium text-slate-900">
-                        {subscription.nextPayment ? new Date(subscription.nextPayment).toLocaleDateString() : "N/A"}
+                        {subscription.nextPayment
+                          ? new Date(
+                              subscription.nextPayment
+                            ).toLocaleDateString()
+                          : "N/A"}
                       </p>
                     </div>
                   </div>
@@ -413,8 +516,12 @@ export default function SubscriptionsPage() {
           {filteredSubscriptions.length === 0 && (
             <div className="text-center py-12">
               <CreditCard className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">No subscriptions found</h3>
-              <p className="text-slate-600">Try adjusting your search or filter criteria.</p>
+              <h3 className="text-lg font-medium text-slate-900 mb-2">
+                No subscriptions found
+              </h3>
+              <p className="text-slate-600">
+                Try adjusting your search or filter criteria.
+              </p>
             </div>
           )}
         </main>
@@ -430,7 +537,11 @@ export default function SubscriptionsPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Avatar>
-                  <AvatarImage src={selectedSubscription.memberAvatar || "/placeholder.svg"} />
+                  <AvatarImage
+                    src={
+                      selectedSubscription.memberAvatar || "/placeholder.svg"
+                    }
+                  />
                   <AvatarFallback>
                     {selectedSubscription.memberName
                       .split(" ")
@@ -439,21 +550,30 @@ export default function SubscriptionsPage() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium">{selectedSubscription.memberName}</p>
-                  <p className="text-sm text-slate-600">{selectedSubscription.planType} Plan</p>
+                  <p className="font-medium">
+                    {selectedSubscription.memberName}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {selectedSubscription.planType} Plan
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div>
                   <Label htmlFor="plan-select">Select Plan</Label>
-                  <Select defaultValue={selectedSubscription.planType.toLowerCase()}>
+                  <Select
+                    defaultValue={selectedSubscription.planType.toLowerCase()}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {planTypes.map((plan) => (
-                        <SelectItem key={plan.name.toLowerCase()} value={plan.name.toLowerCase()}>
+                        <SelectItem
+                          key={plan.name.toLowerCase()}
+                          value={plan.name.toLowerCase()}
+                        >
                           {plan.name} - {formatCurrency(plan.price)}/month
                         </SelectItem>
                       ))}
@@ -478,8 +598,13 @@ export default function SubscriptionsPage() {
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700">Renew Subscription</Button>
-                <Button variant="outline" onClick={() => setIsRenewDialogOpen(false)}>
+                <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700">
+                  Renew Subscription
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsRenewDialogOpen(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -488,5 +613,5 @@ export default function SubscriptionsPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

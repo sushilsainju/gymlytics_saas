@@ -1,23 +1,36 @@
-"use client"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Search, Filter, Plus, Apple, Users, Clock } from "lucide-react"
-import { Sidebar } from "@/components/sidebar"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Search, Filter, Plus, Apple, Users, Clock } from "lucide-react";
+import { Sidebar } from "@/components/sidebar";
 
 // Mock data for nutrition plans
 const nutritionPlans = [
   {
     id: 1,
     name: "High Protein Weight Loss",
-    description: "Designed for muscle preservation during weight loss with high protein intake",
+    description:
+      "Designed for muscle preservation during weight loss with high protein intake",
     goal: "Weight Loss",
     calories: 2200,
     protein: 165,
@@ -33,7 +46,8 @@ const nutritionPlans = [
   {
     id: 2,
     name: "Muscle Building Bulk",
-    description: "High calorie plan for lean muscle gain with balanced macronutrients",
+    description:
+      "High calorie plan for lean muscle gain with balanced macronutrients",
     goal: "Muscle Gain",
     calories: 3200,
     protein: 200,
@@ -49,7 +63,8 @@ const nutritionPlans = [
   {
     id: 3,
     name: "Balanced Maintenance",
-    description: "Well-rounded nutrition plan for maintaining current weight and health",
+    description:
+      "Well-rounded nutrition plan for maintaining current weight and health",
     goal: "Maintenance",
     calories: 2500,
     protein: 125,
@@ -78,63 +93,109 @@ const nutritionPlans = [
     status: "Draft",
     memberNames: ["Amanda Davis", "Kevin Martinez"],
   },
-]
+];
 
 const sampleMeals = [
-  { time: "7:00 AM", meal: "Breakfast", calories: 450, protein: 25, carbs: 45, fat: 18 },
-  { time: "10:00 AM", meal: "Mid-Morning Snack", calories: 200, protein: 15, carbs: 20, fat: 8 },
-  { time: "1:00 PM", meal: "Lunch", calories: 600, protein: 40, carbs: 55, fat: 22 },
-  { time: "4:00 PM", meal: "Afternoon Snack", calories: 250, protein: 20, carbs: 25, fat: 10 },
-  { time: "7:00 PM", meal: "Dinner", calories: 550, protein: 45, carbs: 50, fat: 18 },
-  { time: "9:00 PM", meal: "Evening Snack", calories: 150, protein: 20, carbs: 15, fat: 5 },
-]
+  {
+    time: "7:00 AM",
+    meal: "Breakfast",
+    calories: 450,
+    protein: 25,
+    carbs: 45,
+    fat: 18,
+  },
+  {
+    time: "10:00 AM",
+    meal: "Mid-Morning Snack",
+    calories: 200,
+    protein: 15,
+    carbs: 20,
+    fat: 8,
+  },
+  {
+    time: "1:00 PM",
+    meal: "Lunch",
+    calories: 600,
+    protein: 40,
+    carbs: 55,
+    fat: 22,
+  },
+  {
+    time: "4:00 PM",
+    meal: "Afternoon Snack",
+    calories: 250,
+    protein: 20,
+    carbs: 25,
+    fat: 10,
+  },
+  {
+    time: "7:00 PM",
+    meal: "Dinner",
+    calories: 550,
+    protein: 45,
+    carbs: 50,
+    fat: 18,
+  },
+  {
+    time: "9:00 PM",
+    meal: "Evening Snack",
+    calories: 150,
+    protein: 20,
+    carbs: 15,
+    fat: 5,
+  },
+];
 
 export default function NutritionPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [goalFilter, setGoalFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<any>(null)
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [goalFilter, setGoalFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   const filteredPlans = nutritionPlans.filter((plan) => {
     const matchesSearch =
       plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesGoal = goalFilter === "all" || plan.goal.toLowerCase() === goalFilter.toLowerCase()
-    const matchesStatus = statusFilter === "all" || plan.status.toLowerCase() === statusFilter.toLowerCase()
+      plan.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesGoal =
+      goalFilter === "all" ||
+      plan.goal.toLowerCase() === goalFilter.toLowerCase();
+    const matchesStatus =
+      statusFilter === "all" ||
+      plan.status.toLowerCase() === statusFilter.toLowerCase();
 
-    return matchesSearch && matchesGoal && matchesStatus
-  })
+    return matchesSearch && matchesGoal && matchesStatus;
+  });
 
   const getGoalColor = (goal: string) => {
     switch (goal.toLowerCase()) {
       case "weight loss":
-        return "bg-red-100 text-red-700"
+        return "bg-red-100 text-red-700";
       case "muscle gain":
-        return "bg-blue-100 text-blue-700"
+        return "bg-blue-100 text-blue-700";
       case "maintenance":
-        return "bg-emerald-100 text-emerald-700"
+        return "bg-emerald-100 text-emerald-700";
       default:
-        return "bg-slate-100 text-slate-700"
+        return "bg-slate-100 text-slate-700";
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
-        return "bg-emerald-100 text-emerald-700"
+        return "bg-emerald-100 text-emerald-700";
       case "draft":
-        return "bg-amber-100 text-amber-700"
+        return "bg-amber-100 text-amber-700";
       default:
-        return "bg-slate-100 text-slate-700"
+        return "bg-slate-100 text-slate-700";
     }
-  }
+  };
 
   const handleViewPlan = (plan: any) => {
-    setSelectedPlan(plan)
-    setIsViewDialogOpen(true)
-  }
+    setSelectedPlan(plan);
+    setIsViewDialogOpen(true);
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -145,10 +206,17 @@ export default function NutritionPage() {
         <header className="bg-white border-b border-slate-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Nutrition Plans</h1>
-              <p className="text-slate-600">Create and manage customizable nutrition plans for members</p>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Nutrition Plans
+              </h1>
+              <p className="text-slate-600">
+                Create and manage customizable nutrition plans for members
+              </p>
             </div>
-            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => setIsCreateDialogOpen(true)}>
+            <Button
+              className="bg-emerald-600 hover:bg-emerald-700"
+              onClick={() => setIsCreateDialogOpen(true)}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Create Plan
             </Button>
@@ -228,7 +296,8 @@ export default function NutritionPage() {
         <main className="flex-1 p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-sm text-slate-600">
-              Showing {filteredPlans.length} of {nutritionPlans.length} nutrition plans
+              Showing {filteredPlans.length} of {nutritionPlans.length}{" "}
+              nutrition plans
             </p>
           </div>
 
@@ -241,35 +310,53 @@ export default function NutritionPage() {
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-semibold text-slate-900">{plan.name}</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-slate-900">
+                      {plan.name}
+                    </CardTitle>
                     <div className="flex gap-2">
-                      <Badge variant="secondary" className={getGoalColor(plan.goal)}>
+                      <Badge
+                        variant="secondary"
+                        className={getGoalColor(plan.goal)}
+                      >
                         {plan.goal}
                       </Badge>
-                      <Badge variant="secondary" className={getStatusColor(plan.status)}>
+                      <Badge
+                        variant="secondary"
+                        className={getStatusColor(plan.status)}
+                      >
                         {plan.status}
                       </Badge>
                     </div>
                   </div>
-                  <p className="text-sm text-slate-600 mt-1">{plan.description}</p>
+                  <p className="text-sm text-slate-600 mt-1">
+                    {plan.description}
+                  </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Macros */}
                   <div className="grid grid-cols-4 gap-3 text-center">
                     <div>
-                      <div className="text-lg font-bold text-slate-900">{plan.calories}</div>
+                      <div className="text-lg font-bold text-slate-900">
+                        {plan.calories}
+                      </div>
                       <div className="text-xs text-slate-500">Calories</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-blue-600">{plan.protein}g</div>
+                      <div className="text-lg font-bold text-blue-600">
+                        {plan.protein}g
+                      </div>
                       <div className="text-xs text-slate-500">Protein</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-emerald-600">{plan.carbs}g</div>
+                      <div className="text-lg font-bold text-emerald-600">
+                        {plan.carbs}g
+                      </div>
                       <div className="text-xs text-slate-500">Carbs</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-amber-600">{plan.fat}g</div>
+                      <div className="text-lg font-bold text-amber-600">
+                        {plan.fat}g
+                      </div>
                       <div className="text-xs text-slate-500">Fat</div>
                     </div>
                   </div>
@@ -278,11 +365,15 @@ export default function NutritionPage() {
                   <div className="bg-slate-50 rounded-lg p-3 space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-600">Meals per day:</span>
-                      <span className="font-medium text-slate-900">{plan.mealsPerDay}</span>
+                      <span className="font-medium text-slate-900">
+                        {plan.mealsPerDay}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-600">Created by:</span>
-                      <span className="font-medium text-slate-900">{plan.createdBy}</span>
+                      <span className="font-medium text-slate-900">
+                        {plan.createdBy}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-600">Created:</span>
@@ -295,7 +386,9 @@ export default function NutritionPage() {
                   {/* Assigned Members */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-slate-700">Assigned Members</span>
+                      <span className="text-sm font-medium text-slate-700">
+                        Assigned Members
+                      </span>
                       <Badge variant="outline" className="text-xs">
                         <Users className="h-3 w-3 mr-1" />
                         {plan.assignedMembers}
@@ -303,7 +396,11 @@ export default function NutritionPage() {
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {plan.memberNames.slice(0, 3).map((memberName, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {memberName}
                         </Badge>
                       ))}
@@ -322,8 +419,12 @@ export default function NutritionPage() {
           {filteredPlans.length === 0 && (
             <div className="text-center py-12">
               <Apple className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">No nutrition plans found</h3>
-              <p className="text-slate-600">Try adjusting your search or filter criteria.</p>
+              <h3 className="text-lg font-medium text-slate-900 mb-2">
+                No nutrition plans found
+              </h3>
+              <p className="text-slate-600">
+                Try adjusting your search or filter criteria.
+              </p>
             </div>
           )}
         </main>
@@ -339,7 +440,10 @@ export default function NutritionPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="plan-name">Plan Name</Label>
-                <Input id="plan-name" placeholder="e.g., High Protein Weight Loss" />
+                <Input
+                  id="plan-name"
+                  placeholder="e.g., High Protein Weight Loss"
+                />
               </div>
               <div>
                 <Label htmlFor="goal">Goal</Label>
@@ -358,7 +462,11 @@ export default function NutritionPage() {
 
             <div>
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Describe the nutrition plan..." rows={3} />
+              <Textarea
+                id="description"
+                placeholder="Describe the nutrition plan..."
+                rows={3}
+              />
             </div>
 
             <div className="grid grid-cols-4 gap-4">
@@ -396,8 +504,13 @@ export default function NutritionPage() {
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700">Create Plan</Button>
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+              <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700">
+                Create Plan
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsCreateDialogOpen(false)}
+              >
                 Cancel
               </Button>
             </div>
@@ -414,58 +527,89 @@ export default function NutritionPage() {
           {selectedPlan && (
             <div className="space-y-6">
               <div className="flex gap-2">
-                <Badge className={getGoalColor(selectedPlan.goal)}>{selectedPlan.goal}</Badge>
-                <Badge className={getStatusColor(selectedPlan.status)}>{selectedPlan.status}</Badge>
+                <Badge className={getGoalColor(selectedPlan.goal)}>
+                  {selectedPlan.goal}
+                </Badge>
+                <Badge className={getStatusColor(selectedPlan.status)}>
+                  {selectedPlan.status}
+                </Badge>
               </div>
 
               <p className="text-slate-600">{selectedPlan.description}</p>
 
               <div className="grid grid-cols-4 gap-4 text-center">
                 <div className="p-3 bg-slate-50 rounded-lg">
-                  <div className="text-2xl font-bold text-slate-900">{selectedPlan.calories}</div>
+                  <div className="text-2xl font-bold text-slate-900">
+                    {selectedPlan.calories}
+                  </div>
                   <div className="text-sm text-slate-600">Calories</div>
                 </div>
                 <div className="p-3 bg-blue-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{selectedPlan.protein}g</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {selectedPlan.protein}g
+                  </div>
                   <div className="text-sm text-slate-600">Protein</div>
                 </div>
                 <div className="p-3 bg-emerald-50 rounded-lg">
-                  <div className="text-2xl font-bold text-emerald-600">{selectedPlan.carbs}g</div>
+                  <div className="text-2xl font-bold text-emerald-600">
+                    {selectedPlan.carbs}g
+                  </div>
                   <div className="text-sm text-slate-600">Carbs</div>
                 </div>
                 <div className="p-3 bg-amber-50 rounded-lg">
-                  <div className="text-2xl font-bold text-amber-600">{selectedPlan.fat}g</div>
+                  <div className="text-2xl font-bold text-amber-600">
+                    {selectedPlan.fat}g
+                  </div>
                   <div className="text-sm text-slate-600">Fat</div>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold text-slate-900 mb-3">Sample Daily Schedule</h4>
+                <h4 className="font-semibold text-slate-900 mb-3">
+                  Sample Daily Schedule
+                </h4>
                 <div className="space-y-2">
-                  {sampleMeals.slice(0, selectedPlan.mealsPerDay).map((meal, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Clock className="h-4 w-4 text-slate-400" />
-                        <div>
-                          <p className="font-medium text-slate-900">{meal.meal}</p>
-                          <p className="text-sm text-slate-600">{meal.time}</p>
+                  {sampleMeals
+                    .slice(0, selectedPlan.mealsPerDay)
+                    .map((meal, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Clock className="h-4 w-4 text-slate-400" />
+                          <div>
+                            <p className="font-medium text-slate-900">
+                              {meal.meal}
+                            </p>
+                            <p className="text-sm text-slate-600">
+                              {meal.time}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium text-slate-900">
+                            {meal.calories} cal
+                          </p>
+                          <p className="text-xs text-slate-600">
+                            P: {meal.protein}g | C: {meal.carbs}g | F:{" "}
+                            {meal.fat}g
+                          </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium text-slate-900">{meal.calories} cal</p>
-                        <p className="text-xs text-slate-600">
-                          P: {meal.protein}g | C: {meal.carbs}g | F: {meal.fat}g
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button className="bg-emerald-600 hover:bg-emerald-700">Assign to Members</Button>
+                <Button className="bg-emerald-600 hover:bg-emerald-700">
+                  Assign to Members
+                </Button>
                 <Button variant="outline">Edit Plan</Button>
-                <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsViewDialogOpen(false)}
+                >
                   Close
                 </Button>
               </div>
@@ -474,5 +618,5 @@ export default function NutritionPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

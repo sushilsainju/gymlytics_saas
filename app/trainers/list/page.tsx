@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,21 +13,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Search,
   Filter,
   Plus,
   Mail,
   Phone,
   Users,
-  Clock,
-  Star,
   LayoutGrid,
   List,
+  Star,
+  Clock,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import Link from "next/link";
 
-// Mock data for trainers
+// Mock data for trainers (same as card view)
 const trainers = [
   {
     id: 1,
@@ -146,7 +153,7 @@ const trainers = [
   },
 ];
 
-export default function TrainersPage() {
+export default function TrainersListPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [availabilityFilter, setAvailabilityFilter] = useState("all");
   const [specialtyFilter, setSpecialtyFilter] = useState("all");
@@ -208,10 +215,26 @@ export default function TrainersPage() {
                 Manage your gym trainers and their schedules
               </p>
             </div>
-            <Button className="bg-emerald-600 hover:bg-emerald-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Trainer
-            </Button>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center bg-slate-100 rounded-lg p-1">
+                <Link href="/trainers">
+                  <Button variant="ghost" size="sm" className="h-8 px-3">
+                    <LayoutGrid className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-3 bg-white shadow-sm"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+              <Button className="bg-emerald-600 hover:bg-emerald-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Trainer
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -262,178 +285,165 @@ export default function TrainersPage() {
           </div>
         </div>
 
-        {/* Trainers Grid */}
+        {/* Trainers Table */}
         <main className="flex-1 p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-sm text-slate-600">
               Showing {filteredTrainers.length} of {trainers.length} trainers
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center bg-slate-100 rounded-lg p-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-3 bg-white shadow-sm"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-              <Link href="/trainers/list">
-                <Button variant="ghost" size="sm" className="h-8 px-3">
-                  <List className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredTrainers.map((trainer) => (
-              <Card
-                key={trainer.id}
-                className="hover:shadow-lg transition-shadow cursor-pointer"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarImage src={trainer.avatar || "/placeholder.svg"} />
-                      <AvatarFallback>
-                        {trainer.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <CardTitle className="text-xl font-semibold text-slate-900">
-                        {trainer.name}
-                      </CardTitle>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge
-                          variant="secondary"
-                          className={getAvailabilityColor(trainer.availability)}
-                        >
-                          {trainer.availability}
-                        </Badge>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-amber-500 fill-current" />
-                          <span className="text-sm font-medium text-slate-700">
-                            {trainer.rating}
-                          </span>
+
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-50">
+                  <TableHead className="font-semibold text-slate-900">
+                    Trainer
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Contact
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Status
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Specialties
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Experience
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Members
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Today
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Weekly Hours
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-900">
+                    Rating
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredTrainers.map((trainer) => (
+                  <TableRow
+                    key={trainer.id}
+                    className="hover:bg-slate-50 cursor-pointer"
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={trainer.avatar || "/placeholder.svg"}
+                          />
+                          <AvatarFallback>
+                            {trainer.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium text-slate-900">
+                            {trainer.name}
+                          </div>
+                          <div className="text-sm text-slate-500">
+                            {trainer.certifications.join(", ")}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Contact Info */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Mail className="h-3 w-3" />
-                      <span className="truncate">{trainer.email}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Phone className="h-3 w-3" />
-                      <span>{trainer.phone}</span>
-                    </div>
-                  </div>
-
-                  {/* Specialties */}
-                  <div>
-                    <p className="text-sm font-medium text-slate-700 mb-2">
-                      Specialties
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {trainer.specialties.map((specialty, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className={getSpecialtyColor(specialty)}
-                        >
-                          {specialty}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Experience & Certifications */}
-                  <div className="bg-slate-50 rounded-lg p-3 space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Experience:</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1 text-sm text-slate-600">
+                          <Mail className="h-3 w-3" />
+                          <span className="truncate max-w-[150px]">
+                            {trainer.email}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-slate-600">
+                          <Phone className="h-3 w-3" />
+                          <span>{trainer.phone}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="secondary"
+                        className={getAvailabilityColor(trainer.availability)}
+                      >
+                        {trainer.availability}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1 max-w-[200px]">
+                        {trainer.specialties
+                          .slice(0, 2)
+                          .map((specialty, index) => (
+                            <Badge
+                              key={index}
+                              variant="secondary"
+                              className={`${getSpecialtyColor(
+                                specialty
+                              )} text-xs`}
+                            >
+                              {specialty}
+                            </Badge>
+                          ))}
+                        {trainer.specialties.length > 2 && (
+                          <Badge
+                            variant="secondary"
+                            className="text-xs bg-slate-100 text-slate-600"
+                          >
+                            +{trainer.specialties.length - 2}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <span className="font-medium text-slate-900">
                         {trainer.experience}
                       </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Certifications:</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4 text-slate-400" />
+                        <span className="font-medium text-slate-900">
+                          {trainer.assignedMembers}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4 text-slate-400" />
+                        <span className="font-medium text-slate-900">
+                          {trainer.todaySessions}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <span className="font-medium text-slate-900">
-                        {trainer.certifications.join(", ")}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div>
-                      <div className="text-lg font-bold text-slate-900">
-                        {trainer.assignedMembers}
-                      </div>
-                      <div className="text-xs text-slate-500">Members</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-slate-900">
-                        {trainer.todaySessions}
-                      </div>
-                      <div className="text-xs text-slate-500">Today</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-slate-900">
                         {trainer.weeklyHours}h
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 text-amber-500 fill-current" />
+                        <span className="font-medium text-slate-900">
+                          {trainer.rating}
+                        </span>
                       </div>
-                      <div className="text-xs text-slate-500">This Week</div>
-                    </div>
-                  </div>
-
-                  {/* Assigned Members Preview */}
-                  <div>
-                    <p className="text-sm font-medium text-slate-700 mb-2">
-                      Recent Assigned Members
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {trainer.memberNames
-                        .slice(0, 3)
-                        .map((memberName, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {memberName}
-                          </Badge>
-                        ))}
-                      {trainer.memberNames.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{trainer.memberNames.length - 3} more
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Today's Schedule */}
-                  <div className="flex items-center gap-2 text-xs text-slate-500 pt-2 border-t border-slate-100">
-                    <Clock className="h-3 w-3" />
-                    <span>
-                      Today:{" "}
-                      {trainer.schedule.wednesday !== "Off"
-                        ? trainer.schedule.wednesday
-                        : "Off"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
 
           {filteredTrainers.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
               <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-slate-900 mb-2">
                 No trainers found
